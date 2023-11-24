@@ -1,0 +1,17 @@
+
+
+.box{
+    width: 100%;
+    background-color: aquamarine;
+}
+
+input{
+    border-radius: 4px;
+}
+
+.btnLogin{
+    height: 10%;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: darkkhaki;
+}
