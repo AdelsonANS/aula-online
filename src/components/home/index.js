@@ -9,7 +9,7 @@ const Home = () => {
     return (
         <>
         <div className='w-full h-16 flex justify-center items-center text-center bg-current'>
-            <label className='text-black mr-5'>Filtro: </label>
+            <label className='text-white mr-5'>Filtro: </label>
             <input placeholder="Pesquise o video pelo nome" className='w-6/12 border border-black'/>
         </div>
         <div className='m-20'>
@@ -27,7 +27,7 @@ const Home = () => {
                             <iframe
                                 width="auto"
                                 height="auto"
-                                src="https://www.youtube.com/embed/e6zCcyWdP6o?si=5RRTerK2tCthQSNy&amp;start=300"
+                                src=""
                                 title="YouTube video player"
                                 frameborder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

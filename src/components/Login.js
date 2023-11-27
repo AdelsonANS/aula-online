@@ -3,11 +3,14 @@ import styles from './Login.module.css'
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import api from '../axios/api'
+import _ from 'lodash'
+import { useNavigate } from 'react-router-dom';
 const Login = () => {
 
     const [open, setOpen] = useState(false);
+    const [login, setLogin] = useState({ email: null, password: null })
     const [user, setUser] = useState({});
-
+    const navigate = useNavigate();
     useEffect(() => {
         setUser({
             name: null,
@@ -20,6 +23,8 @@ const Login = () => {
             bairro: null,
             rua: null
         })
+        const a = { email: 'a@hotmail', senha: 123, type: 'admin' }
+        localStorage.setItem('users', JSON.stringify([a]))
     }, [])
 
     async function onHandleChange({ target }, field) {
@@ -33,6 +38,17 @@ const Login = () => {
         }
         setUser(prevUser => ({ ...prevUser, [field]: value }))
     }
+    function onChangeLogin({ target }, field) {
+        const value = target;
+        setLogin(prev => ({ ...prev, [field]: value }))
+    }
+    function verifyLogin() {
+        let users = JSON.parse(localStorage.getItem('users'))
+        users.filter(item=> item.email === login.email && item.password === login.password)
+        if(!_.isEmpty(users)){
+            navigate('/configvideo')
+        }
+    }
 
     function handleClose() {
         setOpen(false)
@@ -41,7 +57,7 @@ const Login = () => {
         setOpen(true)
     }
     const { cep, rua, uf, bairro } = user;
-
+    const { email: emailLogin, password: passwordLogin } = login;
     const style = {
         position: 'absolute',
         top: '50%',
@@ -57,15 +73,27 @@ const Login = () => {
     };
     return (
         <div className='flex justify-center items-center'>
-            <div className="w-96 h-96 mt-48 bg-slate-700 border border-black text-white">
+            <div className="w-96 h-96 mt-48 bg-slate-700 border border-black text-white rounded-lg">
                 <div className='flex flex-col p-10 mt-10'>
                     <label>Email:</label>
-                    <input type='email' />
+                    <input
+                        className='text-black'
+                        type='email'
+                        value={emailLogin}
+                        onChange={e => (onChangeLogin('email'))}
+                    />
                     <label>Senha:</label>
-                    <input type='password' />
-                    <button className={styles.btnLogin}>Entrar</button>
+                    <input
+                        className='text-black'
+                        type='password'
+                        value={passwordLogin}
+                        onChange={e => (onChangeLogin('password'))}
+
+                    />
+                    <button className={styles.btnLogin} onClick={verifyLogin}>Entrar</button>
+                    <span className='text-center mt-5' onClick={handleOpen}><u>Registrar</u></span>
                 </div>
-                <span onClick={handleOpen}><u>Registrar</u></span>
+
             </div>
 
             <Modal
