@@ -1,0 +1,40 @@
+/* Default styles for all screen sizes */
+.page {
+    height: 100vh;
+    background-color: #6ab5ee;
+}
+
+.card {
+    background-color: aliceblue;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid black;
+    border-radius: 8px;
+    padding: 10px; /* Adjusted padding for mobile */
+}
+
+.card > :first-child video:first-child {
+    border-radius: 8px;
+}
+
+.filter {
+    width: 100%;
+    height: 4rem;
+    display: flex;
+    padding: 10px; /* Adjusted padding for mobile */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #254969;
+}
+
+/* Media query for screens smaller than 768px (typical mobile devices) */
+@media (max-width: 768px) {
+    .card {
+        padding: 10px; /* Adjusted padding for mobile */
+    }
+
+    .filter {
+        padding: 10px; /* Adjusted padding for mobile */
+    }
+}

@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ReactPlayer from 'react-player';
 import useStore from '../../store/publication'
 import _ from 'lodash'
-
+import styles from './index.module.css'
 const Viewer = (props) => {
 
     const [publication, setPublication] = useState({})
@@ -60,51 +60,51 @@ const Viewer = (props) => {
     const {name, description, urlVideo} = publication;
     return (
         <div className='w-full'>
-            <input
-                className='w-8/12 p-1 mb-1'
-                type="text"
-                placeholder="Insira o URL do vídeo local"
-                value={urlVideo}
-                onChange={handleInputChange}
-            />
-            <input
-                type="file"
-                accept="video/*"
-                style={{ display: 'none' }}
-                ref={fileInputRef}
-                onChange={handleFileInputChange}
-            />
-            <button className='w-2/12 ml-5 rounded-lg p-1 bg-slate-500 text-white border border-black' onClick={handleBrowseClick}>Procurar</button>
-            
-                <div>
-                    <div className='flex flex-col'>
-                        <span>Nome:</span>
-                        <input
-                         className='w-4/12'
-                         value={name} 
-                         onChange={e => handleChange(e, 'name')}
-                         />
-                        <span>Descrição:</span>
-                        <input
-                         className='mb-3'
-                         value={description}
-                         onChange={e => handleChange(e, 'description')}
-                          />
-                    </div>
-                    <div className='flex'>
-                        {_.isEmpty(urlVideo) ? (
-                            <div className='flex justify-center items-center w-10/12 h-60'>
-                                <span>Sem video</span>
-                            </div>
-                        ): (
-                            <ReactPlayer width={'90%'} height={'250px'} url={urlVideo} controls />
-                        )}
-                        <button onClick={handleAddPublication} className='ml-2 justify-self-end rounded-lg p-1 text-white bg-slate-400 border border-black'>Adcionar Video</button>
-                    </div>
-                </div>
-           
+        <input
+            className='w-full sm:w-8/12 p-1 mb-1'
+            type="text"
+            placeholder="Insira o URL do vídeo local"
+            value={urlVideo}
+            onChange={handleInputChange}
+        />
+        <input
+            type="file"
+            accept="video/*"
+            style={{ display: 'none' }}
+            ref={fileInputRef}
+            onChange={handleFileInputChange}
+        />
+        <button className='w-full sm:w-4/12 md:w-2/12 ml-0 sm:ml-2 rounded-lg p-1 bg-slate-500 text-white border border-black' onClick={handleBrowseClick}>
+            Procurar
+        </button>
 
+        <div className='flex flex-col'>
+            <span>Nome:</span>
+            <input
+                className='w-full sm:w-4/12'
+                value={name}
+                onChange={e => handleChange(e, 'name')}
+            />
+            <span>Descrição:</span>
+            <input
+                className='w-full mb-3'
+                value={description}
+                onChange={e => handleChange(e, 'description')}
+            />
         </div>
+        <div className={styles.boxVideo}>
+            {_.isEmpty(urlVideo) ? (
+                <div>
+                    <span>Sem vídeo</span>
+                </div>
+            ) : (
+                <ReactPlayer width={'100%'} height={'60%'} url={urlVideo} controls />
+            )}
+            <button onClick={handleAddPublication} className='w-full md:w-2/12 mt-2 md:mt-0 rounded-lg p-1 text-white bg-slate-400 border border-black'>
+                Adicionar Vídeo
+            </button>
+        </div>
+    </div>
     )
 
 
