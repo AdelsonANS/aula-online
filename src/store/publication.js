@@ -10,7 +10,11 @@ const useStore = create((set) => ({
     };
     set((state) => ( {publication: [...state.publication, publicationWithTime]} ))
   },
-  removePublication: (index) => set({ publication: 0 }),
+  removePublication: (url) => {
+    set((state) => ({
+      publication: state.publication.filter(item => item.urlVideo !== url)
+    }));
+  },
 }))
 
 

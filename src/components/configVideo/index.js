@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Grid from '@mui/joy/Grid';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
@@ -7,12 +7,20 @@ import ReactPlayer from 'react-player';
 import Viewer from '../viewer';
 import useStore from '../../store/publication';
 import styles from './configVideo.module.css';
+import { useNavigate } from 'react-router-dom';
 
 const ConfigVideo = () => {
 
     const [open, setOpen] = useState(false);
     const [filter, setFilter] = useState('');
     const publications = useStore(store => store.publication)
+    const [typeUser, setTypeUser] = useState('');
+    const navigate = useNavigate()
+    useEffect(() => {
+        let typeUser = JSON.parse(localStorage.getItem('Logged'))
+        setTypeUser(typeUser);
+    }, []);
+
 
     function handleChange({ target }) {
         const { value } = target
@@ -24,7 +32,10 @@ const ConfigVideo = () => {
     function handleOpen() {
         setOpen(true)
     }
-
+    function sair(){
+        localStorage.setItem('Logged', JSON.stringify(''))
+        navigate('/')
+    }
 
     const style = {
         position: 'absolute',
@@ -34,9 +45,6 @@ const ConfigVideo = () => {
         width: '70%',
         bgcolor: '#6ab5ee',
         borderRadius: '8px',
-//        background-color: #6ab5ee;
-
-        //border: '2px solid #000',
         boxShadow: 24,
         pt: 2,
         px: 4,
@@ -46,8 +54,6 @@ const ConfigVideo = () => {
     return (
         <>
             <div className={styles.page}>
-
-
                 <div className={styles.filter}>
                     <label className='text-white mr-5'>Filtro: </label>
                     <input
@@ -57,9 +63,12 @@ const ConfigVideo = () => {
                         onChange={handleChange}
                     />
                     <div className='ml-5'>
-                        <button className='border border-black rounded-lg' onClick={handleOpen}>
-                            <AddIcon color='primary' fontSize='large' />
-                        </button>
+                        {typeUser !== 'client' && (
+                            <button className='border border-black rounded-lg' onClick={handleOpen}>
+                                <AddIcon color='primary' fontSize='large' />
+                            </button>
+                        )}
+                        <button onClick={sair} className='text-white border p-2 ml-3' >SAIR</button>
                     </div>
                 </div>
                 <div className='flex m-20'>
@@ -89,7 +98,7 @@ const ConfigVideo = () => {
                     aria-labelledby="child-modal-title"
                     aria-describedby="child-modal-description"
                 >
-                    <Box sx={{ ...style, width: '50%', height: '60%' }}>
+                    <Box sx={{ ...style, width: '50%', height: 'auto' }}>
                         <span>Adicione o URL de seu Video</span>
                         <Viewer closeModal={handleClose} />
                     </Box>

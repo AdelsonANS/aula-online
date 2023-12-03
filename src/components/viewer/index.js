@@ -74,7 +74,7 @@ const Viewer = (props) => {
             ref={fileInputRef}
             onChange={handleFileInputChange}
         />
-        <button className='w-full sm:w-4/12 md:w-2/12 ml-0 sm:ml-2 rounded-lg p-1 bg-slate-500 text-white border border-black' onClick={handleBrowseClick}>
+        <button className='w-full h-full sm:w-4/12 md:w-2/12 ml-0 sm:ml-2 rounded-lg p-1 bg-slate-500 text-white border border-black' onClick={handleBrowseClick}>
             Procurar
         </button>
 

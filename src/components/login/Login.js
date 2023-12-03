@@ -5,17 +5,16 @@ import api from '../../axios/api'
 import _, { isEmpty, isNil } from 'lodash'
 import { useNavigate } from 'react-router-dom';
 import * as EmailValidator from 'email-validator';
-import validarCpf from 'validar-cpf';
+import { cpf as validarCpf } from 'cpf-cnpj-validator';
 const Login = () => {
 
     const [open, setOpen] = useState(false);
     const [login, setLogin] = useState({ email: null, password: null })
     const [user, setUser] = useState({});
 
+    const [erroLogin, setErroLogin] = useState('')
     const [erroCadastro, setErroCadastro] = useState([])
 
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
 
     const navigate = useNavigate();
     useEffect(() => {
@@ -30,8 +29,10 @@ const Login = () => {
             bairro: null,
             rua: null
         })
-        const a = { email: 'a@hotmail', senha: 123, type: 'admin' }
-        localStorage.setItem('users', JSON.stringify([a]))
+        if (localStorage.getItem('users') === null) {
+            localStorage.setItem('users', JSON.stringify([{ email: 'a@hotmail.com', senha: 123, type: 'admin' }]));
+          }
+
     }, [])
 
     async function onHandleChange({ target }, field) {
@@ -45,67 +46,59 @@ const Login = () => {
         }
         setUser(prevUser => ({ ...prevUser, [field]: value }))
     }
-    function onChangeLogin({ target }, field) {
-        const value = target;
-
+    function onChangeLogin({target} , field) {
+        const {value} = target;
         if (field === 'email') {
             setLogin(prev => ({ ...prev, [field]: value }))
-            setEmailError(validateEmail(value) ? '' : 'E-mail inválido');
         } else if (field === 'password') {
             setLogin(prev => ({ ...prev, [field]: value }))
-            setPasswordError(validatePassword(value) ? '' : 'Senha inválida');
         }
     }
 
-    const validateEmail = (email) => {
-        // Adicione lógica de validação de e-mail
-        // Retorne true se for válido, false se for inválido
-    };
-
-    const validatePassword = (password) => {
-        // Adicione lógica de validação de senha
-        // Retorne true se for válido, false se for inválido
-    };
     function verifyLogin() {
-        let users = JSON.parse(localStorage.getItem('users'))
-        users.filter(item => item.email === login.email && item.password === login.password)
-        if (!_.isEmpty(users)) {
-            navigate('/configvideo')
+        setErroLogin(prev => []);
+        let users = JSON.parse(localStorage.getItem('users'));
+
+       let newFilter =  users.filter(item => item.email === login.email && Number(item.senha) === Number(login.password))
+        
+       if (!_.isEmpty(newFilter)) {
+            let type = newFilter[0];
+            let account = type.type === 'client' ? 'client' : 'admin';
+            localStorage.setItem('Logged', JSON.stringify(account))
+            navigate('/configvideo');
+        } else {
+            setErroLogin(['DADOS INCORRETOS']);
         }
 
     }
     function cadastrarCliente() {
-        setErroCadastro([])
+        setErroCadastro(prev => [])
 
         for (const key in user) {
-         
-            if(key === 'cpf'){
-            }
+ 
             if (isNil(user[key])) {
                 setErroCadastro(prev => [...prev, key + ' vazio'])
+            } else if (key === 'cpf' && !validarCpf.isValid(user[key])) {
+                setErroCadastro(prev => [...prev, 'CPF Invalido'])
+            } else if (key === 'email' && !EmailValidator.validate(user[key])) {
+                setErroCadastro(prev => [...prev, 'Email Invalido'])
             }
         }
-        isValid()
-        if(isEmpty(erroCadastro)){
-            navigate('/configvideo')
-        }
+
+        setErroCadastro(erroAtualizado => {
+
+            if (isEmpty(erroAtualizado)) {
+                const { email, senha } = user
+
+                let users = JSON.parse(localStorage.getItem('users'))
+                users.push({ email, senha, type: 'client' })
+                localStorage.setItem('users', JSON.stringify(users))
+                localStorage.setItem('Logged', JSON.stringify('client'))
+                navigate('/configvideo');
+            }
+            return erroAtualizado;
+        });
     }
-    function isValid({email, cpf} = user){
-
-        if(email && !EmailValidator.validate(email)){
-            setErroCadastro(prev => [...prev, 'Email não valido'])
-        }else if(email && EmailValidator.validate(email)){
-            let list = erroCadastro.filter(item=> item !== 'Email não valido')
-            setErroCadastro(list)
-        }
-        if(cpf && !validarCpf(cpf)){
-            setErroCadastro(prev => [...prev, 'CPF não valido'])
-        }else if(cpf && validarCpf(cpf)){
-            let list = erroCadastro.filter(item=> item !== 'CPF não valido')
-            setErroCadastro(list)
-        }
-
-    } 
 
     function handleClose() {
         setOpen(false)
@@ -121,23 +114,26 @@ const Login = () => {
         <div className={styles.page}>
             <div className={styles.boxLogin}>
                 <div className='flex flex-col p-10 mt-10'>
+                    {!_.isNil(erroLogin) && (
+                        <span className='text-red-600'>{erroLogin}</span>
+                    )}
                     <label>Email:</label>
                     <input
                         className='text-black'
                         placeholder='example@gmail.com'
                         value={emailLogin}
-                        onChange={e => (onChangeLogin('email'))}
+                        onChange={e => (onChangeLogin(e, 'email'))}
                     />
-                    <span className='text-red-500'>{emailError}</span>
+
                     <label>Senha:</label>
                     <input
                         className='text-black'
                         type='password'
                         value={passwordLogin}
-                        onChange={e => (onChangeLogin('password'))}
+                        onChange={e => (onChangeLogin(e, 'password'))}
 
                     />
-                    <span className='text-red-500'>{passwordError}</span>
+
                     <button className={styles.btnLogin} onClick={verifyLogin}>Entrar</button>
                     <span className='text-center mt-5' onClick={handleOpen}><u>Registrar</u></span>
                 </div>
